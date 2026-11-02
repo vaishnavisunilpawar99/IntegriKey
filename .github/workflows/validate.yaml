@@ -1,0 +1,14 @@
+name: Pull Request validation
+
+on: [pull_request]
+
+
+jobs:
+  zkp_vault-contracts-ci:
+    name: Run zkp_vault-contracts validation
+    uses: ./.github/workflows/zkp_vault-contracts-ci.yaml
+
+  zkp_vault-frontend-ci:
+    name: Run zkp_vault-frontend validation
+    uses: ./.github/workflows/zkp_vault-frontend-ci.yaml
+

@@ -1,0 +1,3 @@
+src/components/AdminDashboard.tsx(339,27): error TS2304: Cannot find name 'getExplorerUrl'.
+src/components/services/algorand-service.ts(62,49): error TS2345: Argument of type '{ txn: Transaction; signers: string[]; }[]' is not assignable to parameter of type 'SignerTransaction[][]'.
+  Type '{ txn: Transaction; signers: string[]; }' is missing the following properties from type 'SignerTransaction[]': length, pop, push, concat, and 29 more.

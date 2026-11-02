@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.vscode/**'
+      - '.idea/**'
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  zkp_vault-contracts-validate:
+    name: Run zkp_vault-contracts release
+    secrets: inherit
+    uses: ./.github/workflows/zkp_vault-contracts-ci.yaml
+
+  zkp_vault-contracts-release:
+    name: Run zkp_vault-contracts release
+    secrets: inherit
+    uses: ./.github/workflows/zkp_vault-contracts-cd.yaml
+    needs: zkp_vault-contracts-validate
+
+  zkp_vault-frontend-validate:
+    name: Run zkp_vault-frontend release
+    secrets: inherit
+    uses: ./.github/workflows/zkp_vault-frontend-ci.yaml
+
+  zkp_vault-frontend-release:
+    name: Run zkp_vault-frontend release
+    secrets: inherit
+    uses: ./.github/workflows/zkp_vault-frontend-cd.yaml
+    needs: zkp_vault-frontend-validate

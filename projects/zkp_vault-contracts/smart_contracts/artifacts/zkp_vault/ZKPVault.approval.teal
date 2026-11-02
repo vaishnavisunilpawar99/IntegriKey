@@ -1,0 +1,430 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 2 1 8
+    bytecblock "exams" 0x00 0x151f7c75
+    // smart_contracts/zkp_vault/contract.py:18
+    // class ZKPVault(ARC4Contract):
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    bz main_create_NoOp@11
+    pushbytess 0x68184b10 0x819b7207 0xd8bd939f 0xc990c69d 0x2eeebbb9 // method "create_exam(string,uint64,uint64)void", method "submit_proof(string,string,uint64,string,string,byte[],uint64[])string", method "verify_submission(string,string,uint64,string)bool", method "verify_zk_snark(byte[],uint64[])bool", method "get_contract_info()string"
+    txna ApplicationArgs 0
+    match create_exam submit_proof verify_submission verify_zk_snark main_get_contract_info_route@9
+    err
+
+main_get_contract_info_route@9:
+    // smart_contracts/zkp_vault/contract.py:150
+    // @arc4.abimethod
+    pushbytes 0x151f7c750032496e74656772694b65792076312e30202d20507269766163792d50726573657276696e672041492050726f63746f72696e67
+    log
+    intc_2 // 1
+    return
+
+main_create_NoOp@11:
+    // smart_contracts/zkp_vault/contract.py:18
+    // class ZKPVault(ARC4Contract):
+    pushbytes 0x752c3ac0 // method "create_application()void"
+    txna ApplicationArgs 0
+    match main_create_application_route@12
+    err
+
+main_create_application_route@12:
+    // smart_contracts/zkp_vault/contract.py:29
+    // @arc4.abimethod(create="require")
+    intc_2 // 1
+    return
+
+
+// smart_contracts.zkp_vault.contract.ZKPVault.create_exam[routing]() -> void:
+create_exam:
+    // smart_contracts/zkp_vault/contract.py:34
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_1 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    // smart_contracts/zkp_vault/contract.py:44
+    // key = exam_id.native
+    uncover 2
+    extract 2 0
+    // smart_contracts/zkp_vault/contract.py:45
+    // assert key not in self.exams, "Exam already exists"
+    bytec_0 // "exams"
+    swap
+    concat
+    dup
+    box_len
+    bury 1
+    !
+    assert // Exam already exists
+    // smart_contracts/zkp_vault/contract.py:48
+    // arc4.Address(Txn.sender),
+    txn Sender
+    // smart_contracts/zkp_vault/contract.py:47-51
+    // self.exams[key] = ExamConfig(
+    //     arc4.Address(Txn.sender),
+    //     duration,
+    //     min_score
+    // )
+    uncover 3
+    concat
+    uncover 2
+    concat
+    box_put
+    // smart_contracts/zkp_vault/contract.py:34
+    // @arc4.abimethod
+    intc_2 // 1
+    return
+
+
+// smart_contracts.zkp_vault.contract.ZKPVault.submit_proof[routing]() -> void:
+submit_proof:
+    // smart_contracts/zkp_vault/contract.py:53
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_1 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_1 // 2
+    +
+    swap
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    txna ApplicationArgs 4
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_1 // 2
+    +
+    swap
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 5
+    dup
+    cover 3
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_1 // 2
+    +
+    swap
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 6
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_1 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 7
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_3 // 8
+    *
+    intc_1 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint64>
+    // smart_contracts/zkp_vault/contract.py:76
+    // key = exam_id.native
+    uncover 3
+    extract 2 0
+    dup
+    cover 4
+    // smart_contracts/zkp_vault/contract.py:77
+    // assert key in self.exams, "Exam does not exist"
+    bytec_0 // "exams"
+    swap
+    concat
+    box_len
+    bury 1
+    assert // Exam does not exist
+    // smart_contracts/zkp_vault/contract.py:79-80
+    // # 1. ZK-SNARK VERIFICATION
+    // assert self.verify_zk_snark(zk_proof, public_inputs), "ZK-SNARK Protocol Verifier Rejected Proof"
+    callsub smart_contracts.zkp_vault.contract.ZKPVault.verify_zk_snark
+    popn 2
+    bytec_1 // 0x00
+    !=
+    assert // ZK-SNARK Protocol Verifier Rejected Proof
+    // smart_contracts/zkp_vault/contract.py:82-83
+    // # Verify trust score is valid (0-100)
+    // assert trust_score.native <= UInt64(100), "Trust score cannot exceed 100"
+    btoi
+    dup
+    pushint 100
+    <=
+    assert // Trust score cannot exceed 100
+    // smart_contracts/zkp_vault/contract.py:86-88
+    // # If the trust score is extremely high, automatically mint an
+    // # Integrity Certificate ASA using an inner transaction.
+    // if trust_score.native >= UInt64(90):
+    pushint 90
+    >=
+    bz submit_proof_after_if_else@4
+    // smart_contracts/zkp_vault/contract.py:89-99
+    // itxn.AssetConfig(
+    //     asset_name=String("IntegriKey - ") + key,
+    //     unit_name=String("IKCERT"),
+    //     total=1,
+    //     decimals=0,
+    //     url=ipfs_cid.native,
+    //     manager=Global.current_application_address,
+    //     reserve=Global.current_application_address,
+    //     freeze=Global.current_application_address,
+    //     clawback=Global.current_application_address,
+    // ).submit()
+    itxn_begin
+    // smart_contracts/zkp_vault/contract.py:90
+    // asset_name=String("IntegriKey - ") + key,
+    pushbytes "IntegriKey - "
+    dig 1
+    concat
+    // smart_contracts/zkp_vault/contract.py:94
+    // url=ipfs_cid.native,
+    dig 2
+    extract 2 0
+    // smart_contracts/zkp_vault/contract.py:95
+    // manager=Global.current_application_address,
+    global CurrentApplicationAddress
+    // smart_contracts/zkp_vault/contract.py:96-98
+    // reserve=Global.current_application_address,
+    // freeze=Global.current_application_address,
+    // clawback=Global.current_application_address,
+    dupn 3
+    itxn_field ConfigAssetClawback
+    itxn_field ConfigAssetFreeze
+    itxn_field ConfigAssetReserve
+    itxn_field ConfigAssetManager
+    itxn_field ConfigAssetURL
+    // smart_contracts/zkp_vault/contract.py:93
+    // decimals=0,
+    intc_0 // 0
+    itxn_field ConfigAssetDecimals
+    // smart_contracts/zkp_vault/contract.py:92
+    // total=1,
+    intc_2 // 1
+    itxn_field ConfigAssetTotal
+    // smart_contracts/zkp_vault/contract.py:91
+    // unit_name=String("IKCERT"),
+    pushbytes "IKCERT"
+    itxn_field ConfigAssetUnitName
+    itxn_field ConfigAssetName
+    // smart_contracts/zkp_vault/contract.py:89
+    // itxn.AssetConfig(
+    pushint 3 // acfg
+    itxn_field TypeEnum
+    intc_0 // 0
+    itxn_field Fee
+    // smart_contracts/zkp_vault/contract.py:89-99
+    // itxn.AssetConfig(
+    //     asset_name=String("IntegriKey - ") + key,
+    //     unit_name=String("IKCERT"),
+    //     total=1,
+    //     decimals=0,
+    //     url=ipfs_cid.native,
+    //     manager=Global.current_application_address,
+    //     reserve=Global.current_application_address,
+    //     freeze=Global.current_application_address,
+    //     clawback=Global.current_application_address,
+    // ).submit()
+    itxn_submit
+
+submit_proof_after_if_else@4:
+    // smart_contracts/zkp_vault/contract.py:53
+    // @arc4.abimethod
+    pushbytes 0x151f7c75001c50726f6f66207375626d6974746564207375636365737366756c6c79
+    log
+    intc_2 // 1
+    return
+
+
+// smart_contracts.zkp_vault.contract.ZKPVault.verify_submission[routing]() -> void:
+verify_submission:
+    // smart_contracts/zkp_vault/contract.py:103
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_1 // 2
+    +
+    swap
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_1 // 2
+    +
+    swap
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    txna ApplicationArgs 4
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_1 // 2
+    +
+    swap
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    // smart_contracts/zkp_vault/contract.py:125
+    // trust_score.native <= UInt64(100) and
+    btoi
+    pushint 100
+    <=
+    // smart_contracts/zkp_vault/contract.py:125-126
+    // trust_score.native <= UInt64(100) and
+    // trust_score.native >= UInt64(0)
+    bz verify_submission_bool_false@4
+    intc_2 // 1
+
+verify_submission_bool_merge@5:
+    // smart_contracts/zkp_vault/contract.py:129
+    // return arc4.Bool(is_valid)
+    bytec_1 // 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    // smart_contracts/zkp_vault/contract.py:103
+    // @arc4.abimethod
+    bytec_2 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_2 // 1
+    return
+
+verify_submission_bool_false@4:
+    intc_0 // 0
+    b verify_submission_bool_merge@5
+
+
+// smart_contracts.zkp_vault.contract.ZKPVault.verify_zk_snark[routing]() -> void:
+verify_zk_snark:
+    // smart_contracts/zkp_vault/contract.py:131
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_1 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_3 // 8
+    *
+    intc_1 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint64>
+    callsub smart_contracts.zkp_vault.contract.ZKPVault.verify_zk_snark
+    popn 2
+    bytec_2 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_2 // 1
+    return
+
+
+// smart_contracts.zkp_vault.contract.ZKPVault.verify_zk_snark(zk_proof: bytes, public_inputs: bytes) -> bytes, bytes, bytes:
+smart_contracts.zkp_vault.contract.ZKPVault.verify_zk_snark:
+    // smart_contracts/zkp_vault/contract.py:131-136
+    // @arc4.abimethod
+    // def verify_zk_snark(
+    //     self,
+    //     zk_proof: arc4.DynamicBytes,
+    //     public_inputs: arc4.DynamicArray[arc4.UInt64]
+    // ) -> arc4.Bool:
+    proto 2 3
+    // smart_contracts/zkp_vault/contract.py:142-143
+    // # Validate that the byte-array matches typical ZK-SNARK dimensions
+    // assert zk_proof.length >= UInt64(64), "Invalid ZK Proof byte dimensions"
+    frame_dig -2
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    pushint 64
+    >=
+    assert // Invalid ZK Proof byte dimensions
+    // smart_contracts/zkp_vault/contract.py:145-146
+    // # Ensure public input constraints exist (usually the trust score and exam hash)
+    // assert public_inputs.length > UInt64(0), "Missing mathematical public inputs"
+    frame_dig -1
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    assert // Missing mathematical public inputs
+    // smart_contracts/zkp_vault/contract.py:148
+    // return arc4.Bool(True)
+    pushbytes 0x80
+    frame_dig -2
+    frame_dig -1
+    retsub
